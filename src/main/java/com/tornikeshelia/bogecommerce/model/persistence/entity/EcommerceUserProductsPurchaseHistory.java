@@ -32,10 +32,13 @@ public class EcommerceUserProductsPurchaseHistory {
     @JoinColumn(name = "PRODUCTS_ID", nullable = false)
     private Products products;
 
+    @ManyToOne
+    @JoinColumn(name = "DAILY_REPORT_ID")
+    private DailyReport dailyReport;
+
     @PrePersist
     protected void onCreate() {
         creationDate = new Date(new java.util.Date().getTime());
     }
-
 
 }
