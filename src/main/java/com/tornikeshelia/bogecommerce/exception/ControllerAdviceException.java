@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class ControllerAdviceException {
 
     @ExceptionHandler
-    public ResponseEntity<?> handleException(GeneralException e){
+    public ResponseEntity<?> handleException(GeneralException e) {
         return new ResponseEntity<>(new GeneralExceptionResponse(e.getBogError().getDescription()), HttpStatus.BAD_REQUEST);
     }
 

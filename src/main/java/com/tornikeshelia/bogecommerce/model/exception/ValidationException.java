@@ -12,12 +12,12 @@ public class ValidationException {
     private String field;
     private String validation;
 
-    public static ValidationException transformConstraintViolation(ConstraintViolation constraintViolation){
+    public static ValidationException transformConstraintViolation(ConstraintViolation constraintViolation) {
         String[] fieldPathTree = constraintViolation.getPropertyPath().toString().split("\\.");
-        return new ValidationException(fieldPathTree[fieldPathTree.length - 1],constraintViolation.getMessage());
+        return new ValidationException(fieldPathTree[fieldPathTree.length - 1], constraintViolation.getMessage());
     }
 
-    public static ValidationException transformFieldError(FieldError fieldError){
-        return new ValidationException(fieldError.getField(),fieldError.getDefaultMessage());
+    public static ValidationException transformFieldError(FieldError fieldError) {
+        return new ValidationException(fieldError.getField(), fieldError.getDefaultMessage());
     }
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -29,12 +30,20 @@ public class EcommerceUser {
     @Column(name = "BCRYPTED_PASWORD",nullable = false)
     private String bcryptedPassword;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ECOMMERCE_USER_DETAILS_ID")
-    private EcommerceUserDetails ecommerceUserDetails;
+    @Column(name = "FIRST_NAME")
+    private String firstName;
 
-    @Column(name = "ECOMMERCE_USER_DETAILS_ID", updatable = false, insertable = false)
-    private Long ecommerceUserDetailsId;
+    @Column(name = "LAST_NAME")
+    private String lastName;
+
+    @Column(name = "PERSONAL_NUMBER")
+    private String personalNumber;
+
+    @Column(name = "IBAN")
+    private String iban;
+
+    @Column(name = "BALANCE")
+    private BigDecimal balance;
 
     @PrePersist
     protected void onCreate() {
