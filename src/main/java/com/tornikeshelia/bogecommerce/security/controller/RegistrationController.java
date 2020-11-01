@@ -1,9 +1,15 @@
 package com.tornikeshelia.bogecommerce.security.controller;
 
 
+import com.tornikeshelia.bogecommerce.model.enums.BogError;
+import com.tornikeshelia.bogecommerce.model.exception.GeneralException;
+import com.tornikeshelia.bogecommerce.model.persistence.repository.EcommerceUserRepository;
+import com.tornikeshelia.bogecommerce.security.model.register.ConfirmUserBean;
+import com.tornikeshelia.bogecommerce.security.model.register.RegisterUserBean;
 import com.tornikeshelia.bogecommerce.security.model.register.ShortLinkRequest;
 import com.tornikeshelia.bogecommerce.security.model.register.ShortLinkResponse;
 import com.tornikeshelia.bogecommerce.security.service.EmailServiceImpl;
+import com.tornikeshelia.bogecommerce.security.service.registration.RegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -13,33 +19,25 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping(value = "/reg")
 public class RegistrationController {
 
-
-    @Value("${short-link-url}")
-    private String shortLinkUrl;
-
     @Autowired
-    private EmailServiceImpl emailService;
+    private RegistrationService registrationService;
 
-    @GetMapping(value = "/short-link")
-    public String generateShortLink(@RequestParam("email") String email){
+    @PostMapping(value = "/short-link")
+    public void generateShortLink(@Valid @NotNull @RequestBody RegisterUserBean registerUserBean) {
+        registrationService.generateShortLink(registerUserBean);
+    }
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization","Bearer 6e43cb182d7a93e0daa81166568f830af7d287e9");
-        HttpEntity<ShortLinkRequest> request = new HttpEntity<>(new ShortLinkRequest("bit.ly","http://github.com/shelo16"),headers);
-
-
-        ResponseEntity<ShortLinkResponse> response = restTemplate
-                .exchange(shortLinkUrl, HttpMethod.POST, request, ShortLinkResponse.class);
-
-        emailService.sendSimpleMessage(email,"Test","Hi");
-
-        return response.getBody().getLink();
+    @PostMapping(value = "/confirm")
+    public void confirmRegistration(@Valid @NotNull @RequestBody ConfirmUserBean confirmUserBean) {
+        registrationService.confirmRegistration(confirmUserBean);
     }
 
 }

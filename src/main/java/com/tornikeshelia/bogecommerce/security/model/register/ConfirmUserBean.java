@@ -5,29 +5,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterUserBean {
+public class ConfirmUserBean {
 
+    @NotNull
+    @Min(1)
+    private Long userId;
+
+    @NotNull
     private String password;
-
-    @NotNull
-    private String email;
-
-    @NotNull
-    private String firstName;
-
-    @NotNull
-    private String lastName;
-
-    @NotNull
-    private String iban;
-
-    @NotNull
-    private String personalNumber;
 
 }

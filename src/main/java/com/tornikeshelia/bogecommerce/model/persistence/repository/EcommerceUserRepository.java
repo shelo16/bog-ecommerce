@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface EcommerceUserRepository extends JpaRepository<EcommerceUser, Long> {
 
-    @Query(value = "FROM EcommerceUser c WHERE c.email =:email")
+    @Query(value = "FROM EcommerceUser eu WHERE eu.email =:email")
     EcommerceUser searchByEmail(String email);
+
+    @Query(value = "FROM EcommerceUser eu WHERE eu.id =:id AND eu.isValid = 0")
+    EcommerceUser searchNotValidUserById(Long id);
 
 }

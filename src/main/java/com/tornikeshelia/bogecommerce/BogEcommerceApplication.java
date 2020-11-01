@@ -26,14 +26,12 @@ public class BogEcommerceApplication {
         mailSender.setPort(587);
 
         mailSender.setUsername("tornikeshelia1996@gmail.com");
-        //bcibangaokrqrdpb
         mailSender.setPassword("xbactsxtadzgrulj");
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
 
         return mailSender;
     }

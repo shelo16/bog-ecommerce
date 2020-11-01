@@ -24,26 +24,29 @@ public class EcommerceUser {
     @Column(name = "CREATION_DATE")
     private Date creationDate;
 
-    @Column(name = "EMAIL",nullable = false)
+    @Column(name = "EMAIL", nullable = false)
     private String email;
 
-    @Column(name = "BCRYPTED_PASWORD",nullable = false)
+    @Column(name = "BCRYPTED_PASWORD")
     private String bcryptedPassword;
 
-    @Column(name = "FIRST_NAME")
+    @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
 
-    @Column(name = "LAST_NAME")
+    @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
 
-    @Column(name = "PERSONAL_NUMBER")
+    @Column(name = "PERSONAL_NUMBER", nullable = false)
     private String personalNumber;
 
-    @Column(name = "IBAN")
+    @Column(name = "IBAN", nullable = false)
     private String iban;
 
-    @Column(name = "BALANCE")
+    @Column(name = "BALANCE", nullable = false)
     private BigDecimal balance;
+
+    @Column(name = "IS_VALID")
+    private Long isValid;
 
     @PrePersist
     protected void onCreate() {
