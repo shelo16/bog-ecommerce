@@ -9,6 +9,7 @@ public enum BogError {
 
     OK("Success"),
     PROVIDED_ID_WAS_NULL("Provided Id was null"),
+    INVALID_REQUEST("Invalid Request"),
 
     // ============= PRODUCT ERRORS =========================
 
@@ -17,7 +18,11 @@ public enum BogError {
 
     // ============= DAILY REPORT ERRORS =========================
 
-    COULDNT_FIND_DAILY_REPORT_BY_PROVIDED_DATE_RANGE("Couldn't find DailyReport by provided Date Range");
+    COULDNT_FIND_DAILY_REPORT_BY_PROVIDED_DATE_RANGE("Couldn't find DailyReport by provided Date Range"),
+
+    // ============= DAILY REPORT ERRORS =========================
+
+    COULDNT_FIND_USER_BY_PROVIDED_ID("Couldn't find user with provided id");
 
     private String description;
 

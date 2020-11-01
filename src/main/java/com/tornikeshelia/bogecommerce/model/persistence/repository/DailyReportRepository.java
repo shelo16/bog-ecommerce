@@ -8,7 +8,7 @@ import java.util.Date;
 
 public interface DailyReportRepository extends JpaRepository<DailyReport, Long> {
 
-    @Query(value = "FROM DailyReport dr WHERE dr.creationDate >=startDate AND dr.creationDate <= endDate")
+    @Query(value = "FROM DailyReport dr WHERE dr.creationDate >=:startDate AND dr.creationDate <=:endDate")
     DailyReport getDailyReportByDateRange(Date startDate, Date endDate);
 
 }

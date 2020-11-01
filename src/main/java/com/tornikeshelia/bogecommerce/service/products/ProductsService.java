@@ -1,9 +1,12 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
-import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsBean;
+
+import java.text.ParseException;
 
 public interface ProductsService {
 
-    Long saveProduct(ProductsSaveBean productsSaveBean);
+    Long saveProduct(ProductsBean productsBean) throws ParseException;
 
+    ProductsBean getById(Long id);
 }
