@@ -41,10 +41,10 @@ public class ProductsServiceImpl implements ProductsService {
     private DailyReportRepository dailyReportRepository;
 
     /**
-     * Save Or Update Method :
-     * 1) if ProductBean.getProductId is NULL -> the method will save new Product
+     *                       Save Or Update Method :
+     * 1 -> if ProductBean.getProductId is NULL -> the method will save new Product
      * else -> the method will update the existing Product;
-     * 2) The method will try to update the dailyReport.getTotalUniqueProductsAdded()
+     * 2 -> The method will try to update the dailyReport.getTotalUniqueProductsAdded()
      * reason that the method is not TRANSACTIONAL is to
      **/
     @Override
@@ -81,7 +81,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
-     * GetById Method :
+     *                       GetById Method :
      * Searches products using findById Jpa method -> transforms the product to ProductsBean
      **/
     @Override
@@ -94,6 +94,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
+     *                      GetAll Method :
      * Searches for ALL the products in DB and transforms them to ProductsBean
      **/
     @Override
@@ -109,6 +110,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
+     *                      GetByUserId Method :
      * Searches for ALL the products in DB by userId and transforms them to ProductsBean
      **/
     @Override
@@ -125,7 +127,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
-     * Transactional Method for Purchasing
+     *                          Transactional Method for Purchasing :
      * 1 -> Finds the necessary information (e.g. products, ownerUser , clientUser , dailyReport ) and checks that values aren't NULL
      * 2 -> Calculates totalPrice of purchase and checks if clientUser has enough on the balance
      * 3 -> Checks totalQuantity validity , Subtracts totalQuantity left to product and calculates Commission and PriceAfterCommission
@@ -149,10 +151,10 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
         EcommerceUser clientUser = userRepository.findById(productsPurchaseBean.getUserId())
-                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_DETAILS_FROM_USER_ID));
+                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_BY_PROVIDED_ID));
 
         EcommerceUser ownerUser = userRepository.findById(products.getEcommerceUser().getId())
-                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_DETAILS_FROM_USER_ID));
+                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_FROM_PROVIDED_PRODUCT));
 
 
         // Calculating total price
@@ -163,6 +165,7 @@ public class ProductsServiceImpl implements ProductsService {
             throw new GeneralException(BogError.USER_DOESNT_HAVE_ENOUGH_BALANCE);
         }
 
+        // Checking if the products stock is valid
         if (products.getProductQuantity() < productsPurchaseBean.getProductQuantity()) {
             throw new GeneralException(BogError.NOT_ENOUGH_PRODUCT_QUANTITY_LEFT_IN_STOCK);
         }
