@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.security.model.authentication;
+package com.tornikeshelia.bogecommerce.security.model.bean.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

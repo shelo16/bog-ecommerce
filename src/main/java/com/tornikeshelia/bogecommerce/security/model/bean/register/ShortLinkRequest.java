@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.security.model.register;
+package com.tornikeshelia.bogecommerce.security.model.bean.register;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShortLinkResponse {
+public class ShortLinkRequest {
 
-    private String link;
+    private String domain;
     private String long_url;
 
 }

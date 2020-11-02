@@ -9,7 +9,7 @@ public interface EcommerceUserRepository extends JpaRepository<EcommerceUser, Lo
     @Query(value = "FROM EcommerceUser eu WHERE eu.email =:email")
     EcommerceUser searchByEmail(String email);
 
-    @Query(value = "FROM EcommerceUser eu WHERE eu.id =:id AND eu.isValid = 0")
-    EcommerceUser searchNotValidUserById(Long id);
+    @Query(value = "FROM EcommerceUser eu WHERE eu.email =:email and eu.bcryptedPassword is null")
+    EcommerceUser searchByEmailAndEmptyPassword(String email);
 
 }

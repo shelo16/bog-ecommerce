@@ -45,9 +45,6 @@ public class EcommerceUser {
     @Column(name = "BALANCE", nullable = false)
     private BigDecimal balance;
 
-    @Column(name = "IS_VALID")
-    private Long isValid;
-
     @PrePersist
     protected void onCreate() {
         creationDate = new Date(new java.util.Date().getTime());

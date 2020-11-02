@@ -6,6 +6,7 @@ import lombok.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import java.io.File;
 import java.math.BigDecimal;
 
 @Getter
@@ -30,7 +31,9 @@ public class ProductsBean {
     @Min(1)
     private int productQuantity;
 
-    @NotEmpty(message = "{name.empty}")
+    @NotNull(message = "{name.null}")
+    private File imageFile;
+
     private String imageUrl;
 
     public static ProductsBean transformProductsEntity(Products products) {

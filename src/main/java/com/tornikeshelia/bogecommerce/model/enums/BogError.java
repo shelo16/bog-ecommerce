@@ -24,6 +24,7 @@ public enum BogError {
     // ============= ECOMMERCE_USER ERRORS =========================
 
     COULDNT_FIND_USER_BY_PROVIDED_ID("Couldn't find user with provided id"),
+    COULDNT_FIND_USER_BY_PROVIDED_EMAIL("Couldn't find user with provided email"),
     COULDNT_FIND_USER_FROM_PROVIDED_PRODUCT("Couldn't find user from provided product"),
     USER_ALREADY_REGISTERED("User with provided email is already registered"),
 

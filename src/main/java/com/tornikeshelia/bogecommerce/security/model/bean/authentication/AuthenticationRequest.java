@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.security.model.checkuser;
+package com.tornikeshelia.bogecommerce.security.model.bean.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckUserAuthResponse {
+public class AuthenticationRequest {
 
-    private Boolean isAuthenticated;
-    private String userName;
+    private String email;
+    private String password;
 
 }

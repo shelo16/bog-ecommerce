@@ -2,10 +2,10 @@ package com.tornikeshelia.bogecommerce.security.controller;
 
 import com.tornikeshelia.bogecommerce.model.persistence.entity.EcommerceUser;
 import com.tornikeshelia.bogecommerce.model.persistence.repository.EcommerceUserRepository;
-import com.tornikeshelia.bogecommerce.security.model.authentication.AuthenticationRequest;
-import com.tornikeshelia.bogecommerce.security.model.authentication.AuthenticationResponse;
-import com.tornikeshelia.bogecommerce.security.model.checkuser.CheckUserAuthResponse;
-import com.tornikeshelia.bogecommerce.security.model.register.RegisterUserBean;
+import com.tornikeshelia.bogecommerce.security.model.bean.authentication.AuthenticationRequest;
+import com.tornikeshelia.bogecommerce.security.model.bean.authentication.AuthenticationResponse;
+import com.tornikeshelia.bogecommerce.security.model.bean.checkuser.CheckUserAuthResponse;
+import com.tornikeshelia.bogecommerce.security.model.bean.register.RegisterUserBean;
 import com.tornikeshelia.bogecommerce.security.service.JwtUtilService;
 import com.tornikeshelia.bogecommerce.security.service.MyUserDetailsService;
 import org.springframework.beans.BeanUtils;

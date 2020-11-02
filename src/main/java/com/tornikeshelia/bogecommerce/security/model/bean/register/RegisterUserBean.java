@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.security.model.register;
+package com.tornikeshelia.bogecommerce.security.model.bean.register;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

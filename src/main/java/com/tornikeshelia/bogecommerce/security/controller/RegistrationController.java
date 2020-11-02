@@ -1,23 +1,12 @@
 package com.tornikeshelia.bogecommerce.security.controller;
 
 
-import com.tornikeshelia.bogecommerce.model.enums.BogError;
-import com.tornikeshelia.bogecommerce.model.exception.GeneralException;
-import com.tornikeshelia.bogecommerce.model.persistence.repository.EcommerceUserRepository;
-import com.tornikeshelia.bogecommerce.security.model.register.ConfirmUserBean;
-import com.tornikeshelia.bogecommerce.security.model.register.RegisterUserBean;
-import com.tornikeshelia.bogecommerce.security.model.register.ShortLinkRequest;
-import com.tornikeshelia.bogecommerce.security.model.register.ShortLinkResponse;
-import com.tornikeshelia.bogecommerce.security.service.EmailServiceImpl;
-import com.tornikeshelia.bogecommerce.security.service.registration.RegistrationService;
+import com.tornikeshelia.bogecommerce.security.model.bean.register.AuthBean;
+import com.tornikeshelia.bogecommerce.security.model.bean.register.RegisterUserBean;
+import com.tornikeshelia.bogecommerce.security.model.bean.register.ResetPasswordBean;
+import com.tornikeshelia.bogecommerce.security.service.registration.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -28,16 +17,21 @@ import javax.validation.constraints.NotNull;
 public class RegistrationController {
 
     @Autowired
-    private RegistrationService registrationService;
+    private AuthService authService;
 
-    @PostMapping(value = "/short-link")
-    public void generateShortLink(@Valid @NotNull @RequestBody RegisterUserBean registerUserBean) {
-        registrationService.generateShortLink(registerUserBean);
+    @PostMapping(value = "/register-short-link")
+    public void generateRegisterShortLink(@Valid @NotNull @RequestBody RegisterUserBean registerUserBean) {
+        authService.generateRegisterShortLink(registerUserBean);
     }
 
     @PostMapping(value = "/confirm")
-    public void confirmRegistration(@Valid @NotNull @RequestBody ConfirmUserBean confirmUserBean) {
-        registrationService.confirmRegistration(confirmUserBean);
+    public void confirmAuth(@Valid @NotNull @RequestBody AuthBean authBean) {
+        authService.confirmAuth(authBean);
+    }
+
+    @PostMapping(value = "/reset-short-link")
+    public void generateResetShortLink(@Valid @NotNull @RequestBody ResetPasswordBean resetPasswordBean) {
+        authService.generateResetShortLink(resetPasswordBean);
     }
 
 }
