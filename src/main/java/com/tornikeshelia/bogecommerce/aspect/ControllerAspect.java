@@ -5,7 +5,6 @@ import com.tornikeshelia.bogecommerce.model.persistence.entity.DailyReport;
 import com.tornikeshelia.bogecommerce.model.persistence.entity.WebsiteUserAction;
 import com.tornikeshelia.bogecommerce.model.persistence.repository.DailyReportRepository;
 import com.tornikeshelia.bogecommerce.model.persistence.repository.WebsiteUserActionRepository;
-import com.tornikeshelia.bogecommerce.security.model.bean.authentication.AuthenticationResponse;
 import com.tornikeshelia.bogecommerce.security.model.bean.checkuser.CheckUserAuthResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
@@ -14,12 +13,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.sql.Time;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -83,10 +80,10 @@ public class ControllerAspect {
     public void totalUniqueUsersLoggedIn(CheckUserAuthResponse checkUserAuthResponse) {
 
         Date today = new Date();
-        WebsiteUserAction websiteUserAction = websiteUserActionRepository.getByDateRangeByAuthorizedAndEmail(TimeFunctions.getStartOfDay(today),TimeFunctions.getEndOfDay(today),1L,checkUserAuthResponse.getUserName());
+        WebsiteUserAction websiteUserAction = websiteUserActionRepository.getByDateRangeByAuthorizedAndEmail(TimeFunctions.getStartOfDay(today),TimeFunctions.getEndOfDay(today),1L,checkUserAuthResponse.getEmail());
         DailyReport dailyReport = dailyReportRepository.getDailyReportByDateRange(TimeFunctions.getStartOfDay(today), TimeFunctions.getEndOfDay(today));
         if (websiteUserAction == null && dailyReport != null){
-            websiteUserAction = new WebsiteUserAction(checkUserAuthResponse.getUserName(), 1L);
+            websiteUserAction = new WebsiteUserAction(checkUserAuthResponse.getEmail(), 1L);
             dailyReport.setTotalUniqueAuthorizedUsers(dailyReport.getTotalUniqueAuthorizedUsers()+1);
             websiteUserActionRepository.save(websiteUserAction);
             dailyReportRepository.save(dailyReport);

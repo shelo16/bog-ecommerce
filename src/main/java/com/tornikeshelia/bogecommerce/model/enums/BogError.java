@@ -28,6 +28,7 @@ public enum BogError {
     COULDNT_FIND_USER_FROM_PROVIDED_PRODUCT("Couldn't find user from provided product"),
     USER_ALREADY_REGISTERED("User with provided email is already registered"),
     SHORT_LINK_IS_ALREADY_SENT_TO_YOUR_EMAIL("Shortlink is already sent to your email"),
+    YOU_MUST_BE_AUTHENTICATED_TO_ADD_A_PRODUCT("You must be authenticated to add a product"),
 
     // ============= ECOMMERCE_USER_DETAILS ERRORS =========================
 

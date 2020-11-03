@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.security.model.bean.checkuser;
+package com.tornikeshelia.bogecommerce.model.bean.image;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,8 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckUserAuthResponse {
+public class ImgurImageResponse {
 
-    private Boolean isAuthenticated;
-    private String email;
+    private ImageResponse data;
 
 }

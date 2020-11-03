@@ -18,9 +18,7 @@ public class ProductsBean {
 
     private Long productId;
 
-    @NotNull(message = "{name.null}")
-    @Min(1)
-    private Long ecommerceUserId;
+    private String email;
 
     @NotEmpty(message = "{name.empty}")
     private String productName;
@@ -39,7 +37,7 @@ public class ProductsBean {
     public static ProductsBean transformProductsEntity(Products products) {
         return ProductsBean.builder()
                 .productId(products.getId())
-                .ecommerceUserId(products.getEcommerceUser().getId())
+                .email(products.getEcommerceUser().getEmail())
                 .productName(products.getProductName())
                 .productPrice(products.getProductPrice())
                 .productQuantity(products.getProductQuantity())

@@ -11,4 +11,7 @@ public interface ProductsRepository extends JpaRepository<Products,Long> {
     @Query(value = "SELECT * FROM PRODUCTS p WHERE p.USER_ID =:userId", nativeQuery = true)
     List<Products> getByUserId(Long userId);
 
+    @Query(value = "FROM Products p ORDER BY p.id DESC ")
+    List<Products> getNewestProducts();
+
 }

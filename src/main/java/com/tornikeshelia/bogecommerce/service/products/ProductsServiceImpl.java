@@ -1,6 +1,8 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
 import com.tornikeshelia.bogecommerce.generator.TimeFunctions;
+import com.tornikeshelia.bogecommerce.model.bean.image.ImgurImageRequest;
+import com.tornikeshelia.bogecommerce.model.bean.image.ImgurImageResponse;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
 import com.tornikeshelia.bogecommerce.model.enums.BogError;
@@ -13,12 +15,34 @@ import com.tornikeshelia.bogecommerce.model.persistence.repository.DailyReportRe
 import com.tornikeshelia.bogecommerce.model.persistence.repository.EcommerceUserProductsPurchaseHistoryRepository;
 import com.tornikeshelia.bogecommerce.model.persistence.repository.EcommerceUserRepository;
 import com.tornikeshelia.bogecommerce.model.persistence.repository.ProductsRepository;
+import com.tornikeshelia.bogecommerce.security.model.bean.checkuser.CheckUserAuthResponse;
+import com.tornikeshelia.bogecommerce.security.service.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.FileUtils;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.Transformers;
+import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.IntegerType;
+import org.hibernate.type.LongType;
+import org.hibernate.type.StringType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -40,16 +64,48 @@ public class ProductsServiceImpl implements ProductsService {
     @Autowired
     private DailyReportRepository dailyReportRepository;
 
+    @Autowired
+    private AuthenticationService authenticationService;
+
+    @Value("${image-upload-url}")
+    private String imgurApi;
+
+    @PersistenceContext
+    private EntityManager em;
+
     /**
-     *                       Save Or Update Method :
-     * 1 -> if ProductBean.getProductId is NULL -> the method will save new Product
+     * Save Or Update Secure Method :
+     * 1 -> Checks if user is authenticated and if user exists
+     * 2 -> if ProductBean.getProductId is NULL -> the method will save new Product
      * else -> the method will update the existing Product;
-     * 2 -> The method will try to update the dailyReport.getTotalUniqueProductsAdded()
+     * 3 -> The method will try to update the dailyReport.getTotalUniqueProductsAdded()
      * reason that the method is not TRANSACTIONAL is to
      **/
     @Override
     @Transactional
-    public Long saveProduct(ProductsBean productsBean) {
+    public Long saveProduct(ProductsBean productsBean, HttpServletRequest request) throws IOException {
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Client-ID 59a09cdff7bde15");
+        HttpEntity<String> imgurRequest = new HttpEntity<>(productsBean.getImageFile().getPath(),headers);
+
+        ResponseEntity<ImgurImageResponse> response = restTemplate
+                .exchange(imgurApi, HttpMethod.POST, imgurRequest, ImgurImageResponse.class);
+
+
+        String email = null;
+        CheckUserAuthResponse authResponse = authenticationService.checkIfUserIsAuthenticated(request);
+        if (authResponse.getIsAuthenticated()){
+            email = authResponse.getEmail();
+        }else{
+            throw new GeneralException(BogError.YOU_MUST_BE_AUTHENTICATED_TO_ADD_A_PRODUCT);
+        }
+
+        EcommerceUser user = userRepository.searchByEmail(email);
+        if (user == null) {
+            throw new GeneralException(BogError.COULDNT_FIND_USER_BY_PROVIDED_EMAIL);
+        }
 
         Products products;
         Date today = new Date();
@@ -63,8 +119,6 @@ public class ProductsServiceImpl implements ProductsService {
                     .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_PRODUCT_BY_PROVIDED_ID));
         }
 
-        EcommerceUser user = userRepository.findById(productsBean.getEcommerceUserId())
-                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_BY_PROVIDED_ID));
         products.setEcommerceUser(user);
         BeanUtils.copyProperties(productsBean, products);
         productsRepository.save(products);
@@ -81,7 +135,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
-     *                       GetById Method :
+     * GetById Method :
      * Searches products using findById Jpa method -> transforms the product to ProductsBean
      **/
     @Override
@@ -94,27 +148,52 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
-     *                      GetAll Method :
+     * GetAll Method :
      * Searches for ALL the products in DB and transforms them to ProductsBean
      **/
     @Override
     public List<ProductsBean> getAll() {
-        List<Products> productsList = productsRepository.findAll();
-        if (productsList.isEmpty()) {
-            throw new GeneralException(BogError.NO_PRODUCTS_FOUND);
-        }
+//        List<Products> productsList = productsRepository.getNewestProducts();
+//        if (productsList.isEmpty()) {
+//            throw new GeneralException(BogError.NO_PRODUCTS_FOUND);
+//        }
+//
+//        return productsList.stream()
+//                .map(ProductsBean::transformProductsEntity)
+//                .collect(Collectors.toList());
 
-        return productsList.stream()
-                .map(ProductsBean::transformProductsEntity)
-                .collect(Collectors.toList());
+        String queryString =
+                "SELECT p.id as productId, " +
+                        "p.USER_ID as userId, " +
+                        "eu.EMAIL as email, " +
+                        "p.PRODUCT_NAME as productName, " +
+                        "p.PRODUCT_PRICE as productPrice, " +
+                        "p.PRODUCT_QUANTITY as productQuantity, " +
+                        "p.IMAGE_URL as imageUrl " +
+                        " FROM PRODUCTS p " +
+                        "JOIN ecommerce_user eu ON p.USER_ID = eu.id " +
+                        "ORDER BY p.id DESC";
+
+        Query productsQuery = em.createNativeQuery(queryString);
+        productsQuery.unwrap(SQLQuery.class)
+                .addScalar("productId", LongType.INSTANCE)
+                .addScalar("userId", LongType.INSTANCE)
+                .addScalar("email", StringType.INSTANCE)
+                .addScalar("productName", StringType.INSTANCE)
+                .addScalar("productPrice", BigDecimalType.INSTANCE)
+                .addScalar("productQuantity", IntegerType.INSTANCE)
+                .addScalar("imageUrl", StringType.INSTANCE)
+                .setResultTransformer(Transformers.aliasToBean(ProductsBean.class));
+        return productsQuery.getResultList();
+
     }
 
     /**
-     *                      GetByUserId Method :
+     * GetByUserId Method :
      * Searches for ALL the products in DB by userId and transforms them to ProductsBean
      **/
     @Override
-    public List<ProductsBean> getByUserId(Long userId) {
+    public List<ProductsBean> getByUserId(Long userId, HttpServletRequest request) {
         List<Products> productsList = productsRepository.getByUserId(userId);
 
         if (productsList.isEmpty()) {
@@ -127,7 +206,7 @@ public class ProductsServiceImpl implements ProductsService {
     }
 
     /**
-     *                          Transactional Method for Purchasing :
+     * Transactional Method for Purchasing :
      * 1 -> Finds the necessary information (e.g. products, ownerUser , clientUser , dailyReport ) and checks that values aren't NULL
      * 2 -> Calculates totalPrice of purchase and checks if clientUser has enough on the balance
      * 3 -> Checks totalQuantity validity , Subtracts totalQuantity left to product and calculates Commission and PriceAfterCommission
@@ -137,7 +216,7 @@ public class ProductsServiceImpl implements ProductsService {
      **/
     @Override
     @Transactional
-    public void purchaseProduct(ProductsPurchaseBean productsPurchaseBean) {
+    public void purchaseProduct(ProductsPurchaseBean productsPurchaseBean, HttpServletRequest request) {
 
         Date today = new Date();
 
