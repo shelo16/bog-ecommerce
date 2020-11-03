@@ -85,15 +85,6 @@ public class ProductsServiceImpl implements ProductsService {
     @Transactional
     public Long saveProduct(ProductsBean productsBean, HttpServletRequest request) throws IOException {
 
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Client-ID 59a09cdff7bde15");
-        HttpEntity<String> imgurRequest = new HttpEntity<>(productsBean.getImageFile().getPath(),headers);
-
-        ResponseEntity<ImgurImageResponse> response = restTemplate
-                .exchange(imgurApi, HttpMethod.POST, imgurRequest, ImgurImageResponse.class);
-
-
         String email = null;
         CheckUserAuthResponse authResponse = authenticationService.checkIfUserIsAuthenticated(request);
         if (authResponse.getIsAuthenticated()){
@@ -119,6 +110,18 @@ public class ProductsServiceImpl implements ProductsService {
                     .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_PRODUCT_BY_PROVIDED_ID));
         }
 
+        // Upload image to imgur and save the link
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "Client-ID 59a09cdff7bde15");
+        HttpEntity<String> imgurRequest = new HttpEntity<>(productsBean.getImageFile().getPath(),headers);
+
+        ResponseEntity<ImgurImageResponse> response = restTemplate
+                .exchange(imgurApi, HttpMethod.POST, imgurRequest, ImgurImageResponse.class);
+
+        if (response.getBody() != null){
+            products.setImageUrl(response.getBody().getData().getLink());
+        }
         products.setEcommerceUser(user);
         BeanUtils.copyProperties(productsBean, products);
         productsRepository.save(products);
