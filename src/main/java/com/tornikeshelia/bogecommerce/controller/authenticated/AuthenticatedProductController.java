@@ -1,6 +1,7 @@
 package com.tornikeshelia.bogecommerce.controller.authenticated;
 
-import com.tornikeshelia.bogecommerce.model.bean.products.ProductsBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
 import com.tornikeshelia.bogecommerce.service.products.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +24,12 @@ public class AuthenticatedProductController {
     private ProductsService productsService;
 
     @PostMapping
-    public Long saveProduct(@Valid @RequestBody @NotNull ProductsBean productsBean, HttpServletRequest request) throws ParseException, IOException {
-        return productsService.saveProduct(productsBean, request);
+    public Long saveProduct(@Valid @RequestBody @NotNull ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException, IOException {
+        return productsService.saveProduct(productsSaveBean, request);
     }
 
     @GetMapping("/user/{userId}")
-    public List<ProductsBean> getAllForUser(@Valid @PathVariable @Min(1) @NotNull Long userId, HttpServletRequest request) {
+    public List<ProductsGetBean> getAllForUser(@Valid @PathVariable @Min(1) @NotNull Long userId, HttpServletRequest request) {
         return productsService.getByUserId(userId, request);
     }
 

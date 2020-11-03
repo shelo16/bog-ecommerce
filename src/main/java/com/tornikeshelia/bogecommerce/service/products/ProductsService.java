@@ -1,6 +1,7 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
-import com.tornikeshelia.bogecommerce.model.bean.products.ProductsBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,13 +11,13 @@ import java.util.List;
 
 public interface ProductsService {
 
-    Long saveProduct(ProductsBean productsBean, HttpServletRequest request) throws ParseException, IOException;
+    Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException, IOException;
 
-    ProductsBean getById(Long id);
+    ProductsGetBean getById(Long id);
 
-    List<ProductsBean> getAll();
+    List<ProductsGetBean> getAll();
 
-    List<ProductsBean> getByUserId(Long userId, HttpServletRequest request);
+    List<ProductsGetBean> getByUserId(Long userId, HttpServletRequest request);
 
     void purchaseProduct(ProductsPurchaseBean productsPurchaseBean, HttpServletRequest request);
 }

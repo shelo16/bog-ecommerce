@@ -1,10 +1,10 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
 import com.tornikeshelia.bogecommerce.generator.TimeFunctions;
-import com.tornikeshelia.bogecommerce.model.bean.image.ImgurImageRequest;
 import com.tornikeshelia.bogecommerce.model.bean.image.ImgurImageResponse;
-import com.tornikeshelia.bogecommerce.model.bean.products.ProductsBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.model.enums.BogError;
 import com.tornikeshelia.bogecommerce.model.exception.GeneralException;
 import com.tornikeshelia.bogecommerce.model.persistence.entity.DailyReport;
@@ -18,14 +18,6 @@ import com.tornikeshelia.bogecommerce.model.persistence.repository.ProductsRepos
 import com.tornikeshelia.bogecommerce.security.model.bean.checkuser.CheckUserAuthResponse;
 import com.tornikeshelia.bogecommerce.security.service.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
-import org.hibernate.SQLQuery;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.IntegerType;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,9 +31,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -83,13 +73,13 @@ public class ProductsServiceImpl implements ProductsService {
      **/
     @Override
     @Transactional
-    public Long saveProduct(ProductsBean productsBean, HttpServletRequest request) throws IOException {
+    public Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) throws IOException {
 
         String email = null;
         CheckUserAuthResponse authResponse = authenticationService.checkIfUserIsAuthenticated(request);
-        if (authResponse.getIsAuthenticated()){
+        if (authResponse.getIsAuthenticated()) {
             email = authResponse.getEmail();
-        }else{
+        } else {
             throw new GeneralException(BogError.YOU_MUST_BE_AUTHENTICATED_TO_ADD_A_PRODUCT);
         }
 
@@ -101,12 +91,12 @@ public class ProductsServiceImpl implements ProductsService {
         Products products;
         Date today = new Date();
 
-        if (productsBean.getProductId() == null) {
+        if (productsSaveBean.getProductId() == null) {
             // Creates New
             products = new Products();
         } else {
             // Gets Existing For Update
-            products = productsRepository.findById(productsBean.getProductId())
+            products = productsRepository.findById(productsSaveBean.getProductId())
                     .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_PRODUCT_BY_PROVIDED_ID));
         }
 
@@ -114,16 +104,16 @@ public class ProductsServiceImpl implements ProductsService {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Client-ID 59a09cdff7bde15");
-        HttpEntity<String> imgurRequest = new HttpEntity<>(productsBean.getImageFile().getPath(),headers);
+        HttpEntity<String> imgurRequest = new HttpEntity<>(productsSaveBean.getImageFile().getPath(), headers);
 
         ResponseEntity<ImgurImageResponse> response = restTemplate
                 .exchange(imgurApi, HttpMethod.POST, imgurRequest, ImgurImageResponse.class);
 
-        if (response.getBody() != null){
+        if (response.getBody() != null) {
             products.setImageUrl(response.getBody().getData().getLink());
         }
         products.setEcommerceUser(user);
-        BeanUtils.copyProperties(productsBean, products);
+        BeanUtils.copyProperties(productsSaveBean, products);
         productsRepository.save(products);
 
         DailyReport dailyReport = dailyReportRepository.getDailyReportByDateRange(TimeFunctions.getStartOfDay(today), TimeFunctions.getEndOfDay(today));
@@ -142,11 +132,11 @@ public class ProductsServiceImpl implements ProductsService {
      * Searches products using findById Jpa method -> transforms the product to ProductsBean
      **/
     @Override
-    public ProductsBean getById(Long id) {
+    public ProductsGetBean getById(Long id) {
 
         Products products = productsRepository.findById(id)
                 .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_PRODUCT_BY_PROVIDED_ID));
-        return ProductsBean.transformProductsEntity(products);
+        return ProductsGetBean.transformProductsEntity(products);
 
     }
 
@@ -155,39 +145,15 @@ public class ProductsServiceImpl implements ProductsService {
      * Searches for ALL the products in DB and transforms them to ProductsBean
      **/
     @Override
-    public List<ProductsBean> getAll() {
-//        List<Products> productsList = productsRepository.getNewestProducts();
-//        if (productsList.isEmpty()) {
-//            throw new GeneralException(BogError.NO_PRODUCTS_FOUND);
-//        }
-//
-//        return productsList.stream()
-//                .map(ProductsBean::transformProductsEntity)
-//                .collect(Collectors.toList());
+    public List<ProductsGetBean> getAll() {
+        List<Products> productsList = productsRepository.getNewestProducts();
+        if (productsList.isEmpty()) {
+            throw new GeneralException(BogError.NO_PRODUCTS_FOUND);
+        }
 
-        String queryString =
-                "SELECT p.id as productId, " +
-                        "p.USER_ID as userId, " +
-                        "eu.EMAIL as email, " +
-                        "p.PRODUCT_NAME as productName, " +
-                        "p.PRODUCT_PRICE as productPrice, " +
-                        "p.PRODUCT_QUANTITY as productQuantity, " +
-                        "p.IMAGE_URL as imageUrl " +
-                        " FROM PRODUCTS p " +
-                        "JOIN ecommerce_user eu ON p.USER_ID = eu.id " +
-                        "ORDER BY p.id DESC";
-
-        Query productsQuery = em.createNativeQuery(queryString);
-        productsQuery.unwrap(SQLQuery.class)
-                .addScalar("productId", LongType.INSTANCE)
-                .addScalar("userId", LongType.INSTANCE)
-                .addScalar("email", StringType.INSTANCE)
-                .addScalar("productName", StringType.INSTANCE)
-                .addScalar("productPrice", BigDecimalType.INSTANCE)
-                .addScalar("productQuantity", IntegerType.INSTANCE)
-                .addScalar("imageUrl", StringType.INSTANCE)
-                .setResultTransformer(Transformers.aliasToBean(ProductsBean.class));
-        return productsQuery.getResultList();
+        return productsList.stream()
+                .map(ProductsGetBean::transformProductsEntity)
+                .collect(Collectors.toList());
 
     }
 
@@ -196,7 +162,7 @@ public class ProductsServiceImpl implements ProductsService {
      * Searches for ALL the products in DB by userId and transforms them to ProductsBean
      **/
     @Override
-    public List<ProductsBean> getByUserId(Long userId, HttpServletRequest request) {
+    public List<ProductsGetBean> getByUserId(Long userId, HttpServletRequest request) {
         List<Products> productsList = productsRepository.getByUserId(userId);
 
         if (productsList.isEmpty()) {
@@ -204,7 +170,7 @@ public class ProductsServiceImpl implements ProductsService {
         }
 
         return productsList.stream()
-                .map(ProductsBean::transformProductsEntity)
+                .map(ProductsGetBean::transformProductsEntity)
                 .collect(Collectors.toList());
     }
 
@@ -235,8 +201,12 @@ public class ProductsServiceImpl implements ProductsService {
         EcommerceUser clientUser = userRepository.findById(productsPurchaseBean.getUserId())
                 .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_BY_PROVIDED_ID));
 
-        EcommerceUser ownerUser = userRepository.findById(products.getEcommerceUser().getId())
-                .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_USER_FROM_PROVIDED_PRODUCT));
+        EcommerceUser ownerUser = products.getEcommerceUser();
+
+        // Checking if client and owner are not the same person
+        if (clientUser == ownerUser){
+            throw new GeneralException(BogError.INVALID_REQUEST);
+        }
 
 
         // Calculating total price
