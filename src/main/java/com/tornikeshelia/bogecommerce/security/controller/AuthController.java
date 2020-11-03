@@ -42,8 +42,14 @@ public class AuthController {
     @Autowired
     private PasswordEncoder bcryptPasswordEncoder;
 
+    /**
+     *
+     * 1 ) Authenticates User if username and password are correct
+     * 2 ) Creates JWT token and stores it as HttpOnly cookie
+     *
+     * **/
     @RequestMapping(value = "/authenticate", method = RequestMethod.POST)
-    public ResponseEntity<AuthenticationResponse> authenticateUser(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse res) throws Exception {
+    public CheckUserAuthResponse authenticateUser(@RequestBody AuthenticationRequest authenticationRequest, HttpServletResponse res) throws Exception {
 
         try {
             authenticationManager.authenticate
@@ -63,8 +69,7 @@ public class AuthController {
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         res.addCookie(cookie);
-        System.out.println(jwt);
-        return ResponseEntity.ok(new AuthenticationResponse("success"));
+        return new CheckUserAuthResponse(true,authenticationRequest.getEmail());
 
     }
 
@@ -84,21 +89,16 @@ public class AuthController {
                 }
             }
         }
-
         return new CheckUserAuthResponse(isAuthenticated,email);
     }
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public void register(@RequestBody RegisterUserBean registerUserBean) {
-
-        registerUserBean.setPassword(bcryptPasswordEncoder.encode(registerUserBean.getPassword()));
-        EcommerceUser myUser = new EcommerceUser();
-        BeanUtils.copyProperties(registerUserBean, myUser);
-        userRepository.save(myUser);
-        System.out.println("Successfully saved user");
-
-    }
-
+    /**
+     *
+     * Logout Logic :
+     * Checks if Cookie has a "token" value inside (which is a JWT token)
+     * if true -> gets the token and sets its expiration date as NOW, which basically deletes the cookie
+     *
+     * **/
     @RequestMapping(value = "/stop", method = RequestMethod.GET)
     public void logout(HttpServletResponse response, HttpServletRequest request) {
 

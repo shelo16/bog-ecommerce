@@ -42,13 +42,25 @@ public class AuthServiceImpl implements AuthService {
     @Value("${short-link-url}")
     private String shortLinkUrl;
 
+
+    /**
+     *
+     * GenerateRegisterShortLink :
+     *
+     * 1) checks if user has already generated the short link
+     * 2) Creates RestTemplate and Sends Post request to "https://api-ssl.bitly.com/v4/shorten" with Authorization Headers to generate the shortlink
+     * :: NOTE : because we cant generate the short link for localhost, right now I generate the shortlink for my personal github account and do nothing with the response.
+     * 3) Saves User to DB without password
+     * 4) Generated unique random UUID and saves UUIDCheck to DB with Valid value of 1 (which means YES ) , userId and UUIDType of REGISTER
+     * 5) sends email of Confirming Registration Title and link to the Confirm page with the unique UUID (Which we will use in the confirm method to get the user from db
+     * **/
     @Override
     @Transactional
     public void generateRegisterShortLink(RegisterUserBean registerUserBean) {
 
         EcommerceUser ecommerceUser = userRepository.searchByEmailAndEmptyPassword(registerUserBean.getEmail());
         if (ecommerceUser != null) {
-            throw new GeneralException(BogError.USER_ALREADY_REGISTERED);
+            throw new GeneralException(BogError.SHORT_LINK_IS_ALREADY_SENT_TO_YOUR_EMAIL);
         } else {
             ecommerceUser = new EcommerceUser();
         }
@@ -72,6 +84,15 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    /**
+     *
+     * ConfirmAuth method : Used both for Register Confirmation and ResetPassword Confirmation
+     *
+     * 1) Gets the uuid from RequestBody and gets the UuidCheck from DB with Valid value of 1
+     * 2) INVALIDATES THE UUID and flushed the change to DB ( This is so another user won't be able to open the page with same UUID )
+     * 3) Finds the user with UUIDCheck.userId
+     * 4) updates/sets the Password of the user.
+     * **/
     @Override
     @Transactional
     public void confirmAuth(AuthBean authBean) {
@@ -89,6 +110,16 @@ public class AuthServiceImpl implements AuthService {
 
     }
 
+    /**
+     *
+     * GenerateResetShortLink :
+     *
+     * 1) checks if user exists
+     * 2) Creates RestTemplate and Sends Post request to "https://api-ssl.bitly.com/v4/shorten" with Authorization Headers to generate the shortlink
+     * :: NOTE : because we cant generate the short link for localhost, right now I generate the shortlink for my personal github account and do nothing with the response.
+     * 3) Generated unique random UUID and saves UUIDCheck to DB with Valid value of 1 (which means YES ) , userId and UUIDType of RESET
+     * 4) sends email of Confirming Registration Title and link to the Confirm page with the unique UUID (Which we will use in the confirm method to get the user from db
+     * **/
     @Override
     public void generateResetShortLink(ResetPasswordBean resetPasswordBean) {
         EcommerceUser ecommerceUser = userRepository.searchByEmail(resetPasswordBean.getEmail());

@@ -21,7 +21,6 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         EcommerceUser myUser = userRepository.searchByEmail(email);
-        System.out.println("Successfully found user : " + myUser.getEmail() + " " + myUser.getBcryptedPassword());
         return new User(myUser.getEmail(), myUser.getBcryptedPassword(), new ArrayList<>());
     }
 }

@@ -38,7 +38,7 @@ public class ProductsController {
     }
 
     @GetMapping("/user/{userId}")
-    public List<ProductsBean> getAll(@Valid @PathVariable @Min(1) @NotNull Long userId){
+    public List<ProductsBean> getAllForUser(@Valid @PathVariable @Min(1) @NotNull Long userId){
         return productsService.getByUserId(userId);
     }
 
