@@ -2,6 +2,7 @@ package com.tornikeshelia.bogecommerce.model.bean.products;
 
 import com.tornikeshelia.bogecommerce.model.persistence.entity.Products;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
@@ -28,7 +29,7 @@ public class ProductsSaveBean {
     private int productQuantity;
 
     @NotNull(message = "{name.null}")
-    private File imageFile;
+    private String imageUrl;
 
     public static ProductsSaveBean transformProductsEntity(Products products) {
         return ProductsSaveBean.builder()
@@ -36,6 +37,7 @@ public class ProductsSaveBean {
                 .productName(products.getProductName())
                 .productPrice(products.getProductPrice())
                 .productQuantity(products.getProductQuantity())
+                .imageUrl(products.getImageUrl())
                 .build();
     }
 

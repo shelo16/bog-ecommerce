@@ -1,7 +1,6 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
 import com.tornikeshelia.bogecommerce.generator.TimeFunctions;
-import com.tornikeshelia.bogecommerce.model.bean.image.ImgurImageResponse;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
@@ -21,13 +20,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -100,18 +94,6 @@ public class ProductsServiceImpl implements ProductsService {
                     .orElseThrow(() -> new GeneralException(BogError.COULDNT_FIND_PRODUCT_BY_PROVIDED_ID));
         }
 
-        // Upload image to imgur and save the link
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Client-ID 59a09cdff7bde15");
-        HttpEntity<String> imgurRequest = new HttpEntity<>(productsSaveBean.getImageFile().getPath(), headers);
-
-        ResponseEntity<ImgurImageResponse> response = restTemplate
-                .exchange(imgurApi, HttpMethod.POST, imgurRequest, ImgurImageResponse.class);
-
-        if (response.getBody() != null) {
-            products.setImageUrl(response.getBody().getData().getLink());
-        }
         products.setEcommerceUser(user);
         BeanUtils.copyProperties(productsSaveBean, products);
         productsRepository.save(products);

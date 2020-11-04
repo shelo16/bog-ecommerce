@@ -55,7 +55,7 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         final String jwt = jwtUtilService.generateToken(userDetails);
         Cookie cookie = new Cookie("token", jwt);
         cookie.setPath("/");
-        cookie.setMaxAge(10 * 10 * 10 * 10 * 10);
+        cookie.setMaxAge((int) (System.currentTimeMillis() + 1000 * 60 * 60));
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         res.addCookie(cookie);

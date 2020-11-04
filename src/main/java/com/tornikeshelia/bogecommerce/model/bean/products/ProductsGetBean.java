@@ -4,7 +4,6 @@ package com.tornikeshelia.bogecommerce.model.bean.products;
 import com.tornikeshelia.bogecommerce.model.persistence.entity.Products;
 import lombok.*;
 
-import java.io.File;
 import java.math.BigDecimal;
 
 @Getter
