@@ -24,8 +24,8 @@ to open confirmation page :D )
 
 
 Used external APIs :
-short-link generator -> https://api-ssl.bitly.com/v4/shorten
-image upload -> https://api.imgur.com/3/image
+ * short-link generator -> https://api-ssl.bitly.com/v4/shorten
+ * image upload -> https://api.imgur.com/3/image
 
 EMAIL SENDER : 
 
