@@ -18,11 +18,9 @@ import com.tornikeshelia.bogecommerce.model.persistence.repository.ProductsRepos
 import com.tornikeshelia.bogecommerce.security.model.bean.checkuser.CheckUserAuthResponse;
 import com.tornikeshelia.bogecommerce.security.service.authentication.AuthenticationService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
-import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.beans.BeanUtils;
@@ -36,7 +34,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -75,12 +72,12 @@ public class ProductsServiceImpl implements ProductsService {
      *                         1 -> Checks if user is authenticated and if user exists
      *                         2 -> if ProductBean.getProductId is NULL -> the method will save new Product
      *                         else -> the method will update the existing Product;
-     *                         3 -> The method will try to update the dailyReport.getTotalUniqueProductsAdded()
+     *                         3 -> The method will try to update the dailyReport.getTotalUniqueProductsAdded() -> If dailyReport is null, it will create new
      * @return Long Id of saved product
      **/
     @Override
     @Transactional
-    public Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) throws IOException {
+    public Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) {
 
         String email = null;
         CheckUserAuthResponse authResponse = authenticationService.checkIfUserIsAuthenticated(request);
@@ -113,11 +110,12 @@ public class ProductsServiceImpl implements ProductsService {
 
         DailyReport dailyReport = dailyReportRepository.getDailyReportByDateRange(TimeFunctions.getStartOfDay(today), TimeFunctions.getEndOfDay(today));
         if (dailyReport == null) {
-            throw new GeneralException(BogError.COULDNT_FIND_DAILY_REPORT_BY_PROVIDED_DATE_RANGE);
+            // If daily report wasn't created for today, create one and save it to DB
+            dailyReport = new DailyReport(0, new BigDecimal(0), new BigDecimal(0), 0, 0, 0);
         } else {
             dailyReport.setTotalUniqueProductsAdded(dailyReport.getTotalUniqueProductsAdded() + 1);
-            dailyReportRepository.save(dailyReport);
         }
+        dailyReportRepository.save(dailyReport);
 
         return products.getId();
     }
@@ -275,6 +273,14 @@ public class ProductsServiceImpl implements ProductsService {
 
     }
 
+    /**
+     * Filter Method :
+     *
+     * @param productFilter -> productName , productPrice (filters the minimum product price ) , productQuantity (filters the minimum product quantity)
+     *                      1) Filters PRODUCTS table by either of 3 parameters
+     *                      2) Transforms List of Products to ProductsGetBean
+     * @return List<ProductsGetBean>
+     **/
     @Override
     public List<ProductsGetBean> filter(ProductFilter productFilter) {
 
@@ -298,8 +304,8 @@ public class ProductsServiceImpl implements ProductsService {
                         "p.PRODUCT_QUANTITY as productQuantity, " +
                         "p.IMAGE_URL as imageUrl  " +
                         "FROM PRODUCTS P " +
-                "JOIN ECOMMERCE_USER eu ON p.USER_ID = eu.id" +
-                " WHERE 1=1 " + searchBuilder.toString();
+                        "JOIN ECOMMERCE_USER eu ON p.USER_ID = eu.id" +
+                        " WHERE 1=1 " + searchBuilder.toString();
 
         Query query = em.createNativeQuery(filterQueryString);
         if (!StringUtils.isEmpty(productFilter.getProductName())) {

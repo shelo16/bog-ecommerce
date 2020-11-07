@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface ProductsService {
 
-    Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException, IOException;
+    Long saveProduct(ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException;
 
     ProductsGetBean getById(Long id);
 

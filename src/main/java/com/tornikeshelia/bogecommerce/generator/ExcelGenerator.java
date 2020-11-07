@@ -13,7 +13,6 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -22,7 +21,7 @@ import java.util.*;
 public class ExcelGenerator {
 
 
-    public static File generateReportExcel(ExcelReportBean excelReportBean, HttpServletResponse response) throws IOException {
+    public static File generateReportExcel(ExcelReportBean excelReportBean) throws IOException {
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         DailyReport dailyReport = excelReportBean.getDailyReport();
@@ -165,15 +164,10 @@ public class ExcelGenerator {
 
         //Write the workbook in file system
         FileOutputStream out = new FileOutputStream(new File("BogReportExcel.xlsx"));
-        response.setContentType("application/xlsx");
-        response.setHeader("Content-Disposition", "attachment; filename=" + "BogReportExcel-" + new Date() + ".xlsx");
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-        response.setHeader("Pragma", "no-cache");
-        response.setHeader("Expires", "0");
+
         workbook.write(out);
 
         out.close();
-        workbook.write(response.getOutputStream());
         return new File("BogReportExcel.xlsx");
 
     }

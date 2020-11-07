@@ -1,8 +1,8 @@
 package com.tornikeshelia.bogecommerce.controller.authenticated;
 
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
-import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.service.products.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -24,7 +23,7 @@ public class AuthenticatedProductController {
     private ProductsService productsService;
 
     @PostMapping
-    public Long saveProduct(@Valid @RequestBody @NotNull ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException, IOException {
+    public Long saveProduct(@Valid @RequestBody @NotNull ProductsSaveBean productsSaveBean, HttpServletRequest request) throws ParseException {
         return productsService.saveProduct(productsSaveBean, request);
     }
 

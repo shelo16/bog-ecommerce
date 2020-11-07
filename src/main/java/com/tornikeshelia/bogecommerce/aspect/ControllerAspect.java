@@ -40,14 +40,16 @@ public class ControllerAspect {
     @Before("execution(* com.tornikeshelia.bogecommerce.controller.*.*(..))")
     public void preLogger(JoinPoint joinPoint) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        HttpServletRequest request = attributes.getRequest();
-        log.info("================Received Http Request================");
-        log.info("HTTP METHOD = {}", request.getMethod());
-        log.info("URI = {}", request.getRequestURI());
-        log.info("QUERY = {}", request.getQueryString());
-        log.info("CLASS_METHOD = {}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
-        log.info("ARGS = {}", Arrays.toString(joinPoint.getArgs()));
-        log.info("REQUESTER IP = {}", request.getRemoteAddr());
+        HttpServletRequest request = attributes != null ? attributes.getRequest() : null;
+        if (request != null){
+            log.info("================Received Http Request================");
+            log.info("HTTP METHOD = {}", request.getMethod());
+            log.info("URI = {}", request.getRequestURI());
+            log.info("QUERY = {}", request.getQueryString());
+            log.info("CLASS_METHOD = {}", joinPoint.getSignature().getDeclaringTypeName() + "." + joinPoint.getSignature().getName());
+            log.info("ARGS = {}", Arrays.toString(joinPoint.getArgs()));
+            log.info("REQUESTER IP = {}", request.getRemoteAddr());
+        }
     }
 
     /**

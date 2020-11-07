@@ -22,10 +22,20 @@ public class TimeFunctions {
     public static Date getEndOfDay(Date today) {
 
         Calendar calendar = new GregorianCalendar();
+        calendar.setTime(today);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
         calendar.set(Calendar.MINUTE, 59);
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
+
+    }
+
+    public static Date minusDays(Date today,int day) {
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(today);
+        calendar.add(java.util.Calendar.DAY_OF_MONTH, day);
         return calendar.getTime();
 
     }
