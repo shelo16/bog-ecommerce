@@ -4,15 +4,23 @@ Demo project for BOG
 
 Database Access : PostgreSQL
 
-In order to run the application you should have Database named : "bog-db" and schema named "ecommerce-platform". DB port is running on 5432
-The DB server must have an Admin user with Save and Retrieve privilages and username = "postgres" , password = "123456"
+In order to run the application you should have : 
+ * Database named : "bog-db" 
+ * schema named "ecommerce-platform". 
+ * DB port is running on 5432
+The DB server must have an Admin user with Save and Retrieve privilages and 
+ * username = "postgres" 
+ * password = "123456"
 
-This configuration can be changed in Application.properties under "spring.datasource.url" , "spring.datasource.username", "spring.datasource.password"
+This configuration can be changed in Application.properties under :
+ * "spring.datasource.url" , 
+ * "spring.datasource.username", 
+ * "spring.datasource.password"
 
 API technologies : Application in running on Spring Boot with Java 8 and Tomcat for Application Server
 * Built in Swagger
 
-Every Method is Documented
+ * Every Method is Documented
 
 PROBLEMS : 
 
