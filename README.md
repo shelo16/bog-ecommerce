@@ -17,7 +17,7 @@ Every Method is Documented
 PROBLEMS : 
 
 The only problem encoutered so far was generating short-link for the Application. In order to generate the short-link the application
-must have a domain. Because I didn't own any domain and the application starts with localhost ( which cannot generate any short-link ) 
+must have a domain. Because I didn't own any domain and the application runs on localhost ( which cannot generate any short-link ) 
 I came up with the temporary solution. Right now I'm generating the short-links for my github account (this is to show that the actual generating short-link
 was not the problem ) , and when it comes to sending the shortlink url to the client, I'm actually sending the full url (because my private github repos url won't come handy
 to open confirmation page :D )
