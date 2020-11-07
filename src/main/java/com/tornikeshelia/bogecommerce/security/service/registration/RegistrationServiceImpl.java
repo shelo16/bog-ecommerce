@@ -25,7 +25,7 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
-public class AuthServiceImpl implements AuthService {
+public class RegistrationServiceImpl implements RegistrationService {
 
     @Autowired
     private EcommerceUserRepository userRepository;
@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      *
      * GenerateRegisterShortLink :
-     *
+     * @param registerUserBean -> email,firstName,lastName,personalNumber,iban,password(which is null)
      * 1) checks if user has already generated the short link
      * 2) Creates RestTemplate and Sends Post request to "https://api-ssl.bitly.com/v4/shorten" with Authorization Headers to generate the shortlink
      * :: NOTE : because we cant generate the short link for localhost, right now I generate the shortlink for my personal github account and do nothing with the response.
@@ -87,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      *
      * ConfirmAuth method : Used both for Register Confirmation and ResetPassword Confirmation
-     *
+     * @param authBean -> uuid, password , type UUIDType enum
      * 1) Gets the uuid from RequestBody and gets the UuidCheck from DB with Valid value of 1
      * 2) INVALIDATES THE UUID and flushed the change to DB ( This is so another user won't be able to open the page with same UUID )
      * 3) Finds the user with UUIDCheck.userId
@@ -113,7 +113,7 @@ public class AuthServiceImpl implements AuthService {
     /**
      *
      * GenerateResetShortLink :
-     *
+     * @param resetPasswordBean -> email
      * 1) checks if user exists
      * 2) Creates RestTemplate and Sends Post request to "https://api-ssl.bitly.com/v4/shorten" with Authorization Headers to generate the shortlink
      * :: NOTE : because we cant generate the short link for localhost, right now I generate the shortlink for my personal github account and do nothing with the response.

@@ -29,15 +29,12 @@ public class AuthenticationServiceImpl implements AuthenticationService{
     @Autowired
     private JwtUtilService jwtUtilService;
 
-    @Autowired
-    private EcommerceUserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder bcryptPasswordEncoder;
-
     /**
+     * AuthenticateUser method :
+     * @param authenticationRequest -> email,password
      * 1 ) Authenticates User if username and password are correct
      * 2 ) Creates JWT token and stores it as HttpOnly cookie
+     * @return checkUserAuthReponse -> boolean isAuthenticated , email
      **/
     @Override
     public CheckUserAuthResponse authenticateUser(AuthenticationRequest authenticationRequest, HttpServletResponse res) throws Exception {
@@ -62,6 +59,15 @@ public class AuthenticationServiceImpl implements AuthenticationService{
         return new CheckUserAuthResponse(true, authenticationRequest.getEmail());
     }
 
+    /**
+     * checkIfUserIsAuthenticated method :
+     * @param request HttpServletRequest -> To check the cookie
+     * 1 ) check cookies for token
+     * 2 ) if token exists :
+     *          @return checkUserAuthReponse -> boolean isAuthenticated , email
+     *    if token Doesnt exist :
+     *          @return checkUserAuthResponse -> isAuthenticated =null , email = null
+     **/
     @Override
     public CheckUserAuthResponse checkIfUserIsAuthenticated(HttpServletRequest request) {
         String jwtToken = null;
@@ -83,6 +89,8 @@ public class AuthenticationServiceImpl implements AuthenticationService{
 
     /**
      * Logout Logic :
+     * @param request HttpServletRequest -> To check the cookie
+     * @param response HttpServletResponse -> to set the cookie expiration
      * Checks if Cookie has a "token" value inside (which is a JWT token)
      * if true -> gets the token and sets its expiration date as NOW, which basically deletes the cookie
      **/

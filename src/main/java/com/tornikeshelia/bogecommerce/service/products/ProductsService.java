@@ -1,5 +1,6 @@
 package com.tornikeshelia.bogecommerce.service.products;
 
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductFilter;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
@@ -20,4 +21,6 @@ public interface ProductsService {
     List<ProductsGetBean> getByUserId(Long userId, HttpServletRequest request);
 
     void purchaseProduct(ProductsPurchaseBean productsPurchaseBean, HttpServletRequest request);
+
+    List<ProductsGetBean> filter(ProductFilter productFilter);
 }

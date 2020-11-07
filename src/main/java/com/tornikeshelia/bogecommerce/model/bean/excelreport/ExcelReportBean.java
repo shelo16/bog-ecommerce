@@ -1,11 +1,14 @@
 package com.tornikeshelia.bogecommerce.model.bean.excelreport;
 
+import com.tornikeshelia.bogecommerce.model.bean.purchasehistory.PurchaseHistoryExcelBean;
+import com.tornikeshelia.bogecommerce.model.persistence.entity.DailyReport;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,11 +16,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class ExcelReportBean {
 
-    private int totalUniqueProductsSold;
-    private BigDecimal totalAmountSold;
-    private BigDecimal totalCommissionReceived;
-    private int totalUniqueProductsAdded;
-    private int totalUniqueAuthorizedUsers;
-    private int totalVisitsOnWebPage;
+    private DailyReport dailyReport;
+    private List<PurchaseHistoryExcelBean> purchaseHistoryExcelBeanList;
 
 }

@@ -29,12 +29,16 @@ public enum BogError {
     USER_ALREADY_REGISTERED("User with provided email is already registered"),
     SHORT_LINK_IS_ALREADY_SENT_TO_YOUR_EMAIL("Shortlink is already sent to your email"),
     YOU_MUST_BE_AUTHENTICATED_TO_ADD_A_PRODUCT("You must be authenticated to add a product"),
+    YOU_MUST_BE_AUTHENTICATED_TO_BUY_A_PRODUCT("You must be authenticated to buy a product"),
 
     // ============= ECOMMERCE_USER_DETAILS ERRORS =========================
 
     COULDNT_FIND_USER_DETAILS_FROM_USER_ID("Couldn't find user details from user id"),
     USER_DOESNT_HAVE_ENOUGH_BALANCE("User doesn't have enough balance to purchase the product"),
-    NOT_ENOUGH_PRODUCT_QUANTITY_LEFT_IN_STOCK("Not enough product quantity left in stock");
+    NOT_ENOUGH_PRODUCT_QUANTITY_LEFT_IN_STOCK("Not enough product quantity left in stock"),
+
+    // ============= ECOMMERCE_USER_DETAILS ERRORS =========================
+    EXCEL_GENERATION_PURCHASE_HISTORY_WAS_NULL("Excel generation purchase history model was null");
 
     private String description;
 

@@ -47,4 +47,12 @@ public class DailyReport {
         creationDate = new Date(new java.util.Date().getTime());
     }
 
+    public DailyReport(int totalUniqueProductsSold, BigDecimal totalAmountSold, BigDecimal totalCommissionReceived, int totalUniqueProductsAdded, int totalUniqueAuthorizedUsers, int totalVisitsOnWebPage) {
+        this.totalUniqueProductsSold = totalUniqueProductsSold;
+        this.totalAmountSold = totalAmountSold;
+        this.totalCommissionReceived = totalCommissionReceived;
+        this.totalUniqueProductsAdded = totalUniqueProductsAdded;
+        this.totalUniqueAuthorizedUsers = totalUniqueAuthorizedUsers;
+        this.totalVisitsOnWebPage = totalVisitsOnWebPage;
+    }
 }

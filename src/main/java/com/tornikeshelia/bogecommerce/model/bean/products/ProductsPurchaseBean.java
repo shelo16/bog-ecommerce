@@ -17,9 +17,6 @@ public class ProductsPurchaseBean {
     private int productQuantity;
 
     @NotNull
-    private Long userId;
-
-    @NotNull
     private Long productId;
 
 }

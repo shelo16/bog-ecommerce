@@ -1,5 +1,6 @@
 package com.tornikeshelia.bogecommerce.controller;
 
+import com.tornikeshelia.bogecommerce.model.bean.products.ProductFilter;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsGetBean;
 import com.tornikeshelia.bogecommerce.service.products.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,13 @@ public class ProductsController {
     @GetMapping
     public List<ProductsGetBean> getAll() {
         return productsService.getAll();
+    }
+
+    @PostMapping
+    public List<ProductsGetBean> filter(@RequestBody @NotNull ProductFilter productFilter) {
+
+        return productsService.filter(productFilter);
+
     }
 
 

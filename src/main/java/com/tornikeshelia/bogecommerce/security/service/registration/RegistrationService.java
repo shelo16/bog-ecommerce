@@ -4,7 +4,7 @@ import com.tornikeshelia.bogecommerce.security.model.bean.register.AuthBean;
 import com.tornikeshelia.bogecommerce.security.model.bean.register.RegisterUserBean;
 import com.tornikeshelia.bogecommerce.security.model.bean.register.ResetPasswordBean;
 
-public interface AuthService {
+public interface RegistrationService {
 
     void generateRegisterShortLink(RegisterUserBean registerUserBean);
 

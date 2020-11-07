@@ -1,4 +1,4 @@
-package com.tornikeshelia.bogecommerce.model.bean.purchasehistory;
+package com.tornikeshelia.bogecommerce.model.bean.products;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,12 +11,10 @@ import java.math.BigDecimal;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaseHistoryExcelBean {
+public class ProductFilter {
 
     private String productName;
     private BigDecimal productPrice;
     private int productQuantity;
-    private String ecommerceUserEmail;
-    private String ecommerceUserPersonalNumber;
 
 }
