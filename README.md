@@ -22,6 +22,9 @@ API technologies : Application in running on Spring Boot with Java 8 and Tomcat 
 
  * Every Method is Documented
 
+SECURITY :
+* Application uses the JWT authorization system. Which can be found in "JwtRequestFilter". 
+
 PROBLEMS : 
 
 The only problem encoutered so far was generating short-link for the Application. In order to generate the short-link the application
