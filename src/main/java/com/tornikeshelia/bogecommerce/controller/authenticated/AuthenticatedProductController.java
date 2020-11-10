@@ -5,6 +5,7 @@ import com.tornikeshelia.bogecommerce.model.bean.products.ProductsPurchaseBean;
 import com.tornikeshelia.bogecommerce.model.bean.products.ProductsSaveBean;
 import com.tornikeshelia.bogecommerce.service.products.ProductsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*", allowCredentials = "true")
 @RequestMapping(value = "/secure/product")
+@Validated
 public class AuthenticatedProductController {
 
     @Autowired
